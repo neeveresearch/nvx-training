@@ -1,16 +1,14 @@
-# nvx-training
-X Platform Training Apps
-This repository contains domain specific apps authored using the X Platform.
+# X Platform Training Apps
+This repository contains a collection of apps primarily used for developer training on the X Platform.
 
-Building the apps
-Ensure Maven is installed
-Ensure you have a valid X Platform license (see Working with X Platform Licenses)
-Clone this repository
-Run mvn install (or mvn -DskipTests clean install to skip tests).
-You may also change into a subdirector and build any application on its own.
+## Building the apps
+1. Ensure Maven is installed
+2. Ensure you have a valid X Platform license (see [Working with X Platform Licenses](https://docs.neeveresearch.com/display/TALONDOC/Working+with+X+Platform+Licenses))
+2. Clone this repository
+3. Run mvn install (or mvn -DskipTests clean install to skip tests). 
 
-The Apps
+## The Apps
 The following lists and describes the apps in this repository
 
-Credit Card Authorization (nvx-app-ccauth)
-This project is based on card processing solution donated by Kode41 which showcases a fraud detection usecase using the X Platform.
+### Credit Card Authorization (nvx-app-ccauth)
+This project showcases a credit card authorization usecase for a card processing solution built using the X Platform.
