@@ -1,0 +1,177 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.neeve</groupId>
+    <artifactId>nvx-app-ccauth-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>CCAuth Parent</name>
+
+    <modules>
+        <module>nvx-app-ccauth-roe</module>
+        <module>nvx-app-ccauth-merchantservice</module>
+        <module>nvx-app-ccauth-cardservice</module>
+        <module>nvx-app-ccauth-customerservice</module>
+        <module>nvx-app-ccauth-seeder</module>
+        <module>nvx-app-ccauth-driver</module>
+        <module>nvx-app-ccauth-system</module>
+        <module>nvx-app-ccauth-accountservice</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <nvx.talon.version>3.10.90</nvx.talon.version>
+        <nvx.jms.version>3.10.90</nvx.jms.version>
+        <nvx.solace.version>3.10.90</nvx.solace.version>
+        <nvx.native.version>3.10.47</nvx.native.version>
+        <nvx.robin.version>2.7.0</nvx.robin.version>
+        <nvx.codegen.encodingType>Xbuf</nvx.codegen.encodingType>
+        <nvx.codegen.protocompat>None</nvx.codegen.protocompat>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-talon</artifactId>
+            <version>${nvx.talon.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-native</artifactId>
+            <classifier>linux-x86-64</classifier>
+            <version>${nvx.native.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-solace</artifactId>
+            <version>${nvx.solace.version}</version>
+        </dependency>
+
+        <!-- dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-robin</artifactId>
+            <version>${nvx.robin.version}</version>
+        </dependency -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Xmx2g</argLine>
+                </configuration>
+                <version>2.20</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Maven Central Repository</name>
+            <url>http://repo1.maven.org/maven2</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <!-- Visit http://license.neeveresearch.com to get credentials -->
+        <repository>
+            <id>neeve-licensed</id>
+            <url>http://nexus.neeveresearch.com/nexus/content/repositories/neeve-licensed/</url>
+            <name>Neeve Licensed Repository</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <name>Maven Plugin Repository</name>
+            <url>http://repo1.maven.org/maven2</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+        </pluginRepository>
+        <!-- Visit http://license.neeveresearch.com to get credentials -->
+        <pluginRepository>
+            <id>neeve-licensed</id>
+            <url>http://nexus.neeveresearch.com/nexus/content/repositories/neeve-licensed/</url>
+            <name>Neeve Licensed Repository</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <profiles>
+        <profile>
+            <id>only-eclipse</id>
+            <activation>
+                <property>
+                    <name>m2e.version</name>
+                </property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on
+                          the Maven build itself. -->
+                        <plugin>
+                            <groupId>org.eclipse.m2e</groupId>
+                            <artifactId>lifecycle-mapping</artifactId>
+                            <version>1.0.0</version>
+                            <configuration>
+                                <lifecycleMappingMetadata>
+                                    <pluginExecutions>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.apache.maven.plugins</groupId>
+                                                <artifactId>maven-dependency-plugin</artifactId>
+                                                <versionRange>[2.5,)</versionRange>
+                                                <goals>
+                                                    <goal>copy-dependencies</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <ignore></ignore>
+                                            </action>
+                                        </pluginExecution>
+                                    </pluginExecutions>
+                                </lifecycleMappingMetadata>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
+</project>

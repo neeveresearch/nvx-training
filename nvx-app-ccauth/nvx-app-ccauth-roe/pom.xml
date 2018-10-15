@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>nvx-app-ccauth-roe</artifactId>
+    <packaging>jar</packaging>
+    <name>CCAuth ROE</name>
+
+    <parent>
+        <groupId>com.neeve</groupId>
+        <artifactId>nvx-app-ccauth-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.neeve</groupId>
+                <artifactId>nvx-adm-maven-plugin</artifactId>
+                <version>${nvx.talon.version}</version>
+                <executions>
+                    <execution>
+                        <id>Fields</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>adm-generate</goal>
+                        </goals>
+                        <configuration>
+                            <modelFile>${project.basedir}/src/main/models/com/neeve/ccauth/roe/fields/fields.xml</modelFile>
+                            <encodingType>${nvx.codegen.encodingType}</encodingType>
+                            <protoXbufGenerationCompatibility>${nvx.codegen.protocompat}</protoXbufGenerationCompatibility>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Messages</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>adm-generate</goal>
+                        </goals>
+                        <configuration>
+                            <modelFile>${project.basedir}/src/main/models/com/neeve/ccauth/roe/messages/messages.xml</modelFile>
+                            <encodingType>${nvx.codegen.encodingType}</encodingType>
+                            <protoXbufGenerationCompatibility>${nvx.codegen.protocompat}</protoXbufGenerationCompatibility>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

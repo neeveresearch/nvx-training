@@ -1,0 +1,8 @@
+##DISPLAYNAME Upgrade a Card Service XVM
+##DESCRIPTION Updates configuration and binaries for a Card Service XVM
+##VAR partition [displayName="Partition", type=String, validValues="1,2", description="The partition of the card service to provision"] 
+##VAR instance [displayName="Instance", type=String, validValues="a,b", description="The instance of the card service to provision"] 
+
+configure the cardservice-${partition::1}${instance::a} xvm
+deploy to the cardservice-${partition::1}${instance::a} xvm
+

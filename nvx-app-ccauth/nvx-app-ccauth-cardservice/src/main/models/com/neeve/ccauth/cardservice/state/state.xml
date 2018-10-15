@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<model xmlns="http://www.neeveresearch.com/schema/x-adml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="com.neeve.ccauth.cardservice.state" defaultFactoryId="5">
+    <import model="com/neeve/ccauth/cardservice/messages/messages.xml"/>
+
+    <factories>
+        <factory name="StateFactory" id="5" />
+    </factories>
+
+    <entities>
+        <entity name="Repository" id="1">
+            <field name="cards" type="Cards" id="1"/>
+        </entity>
+
+        <entity name="Card" id="2">
+            <fieldRef ref="AccountNumber" isKey="true"/>
+            <fieldRef ref="CustomerId"/>
+        </entity>
+    </entities>
+
+    <collections>
+        <collection name="Cards" is="StringMap" contains="Card" id="1000"/>
+    </collections>
+</model>

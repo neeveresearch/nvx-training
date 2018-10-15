@@ -1,0 +1,119 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>nvx-app-ccauth-dependencybundle</artifactId>
+    <packaging>jar</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>CCAuth Dependency Bundle</name>
+
+    <parent>
+        <groupId>com.neeve</groupId>
+        <artifactId>nvx-app-ccauth-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <useRepositoryLayout>true</useRepositoryLayout>
+                            <addParentPoms>true</addParentPoms>
+                            <includeParents>true</includeParents>
+                            <copyPom>true</copyPom>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>list-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>list</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${project.build.directory}/dependency-list.txt</outputFile>
+                            <silent>true</silent>
+                            <outputScope>false</outputScope>
+                            <addParentPoms>true</addParentPoms>
+                            <includeParents>true</includeParents>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.neeve</groupId>
+                <artifactId>nvx-maven-buildtools-plugin</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <id>generate-install-scripts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>generate-installation-scripts</goal>
+                        </goals>
+                        <configuration>
+                            <dependencyList>${project.build.directory}/dependency-list.txt</dependencyList>
+                            <repositoryRoot>${project.build.directory}/dependencies</repositoryRoot>
+                            <installScriptOutputDirectory>${project.build.directory}/scripts</installScriptOutputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Assemble dependencies -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>assemble-platform-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/m2-bundle.xml</descriptor>
+                            </descriptors>
+                            <attach>true</attach>
+                            <formats>
+                                <format>zip</format>
+                                <format>tgz</format>
+                            </formats>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-adm-maven-plugin</artifactId>
+            <version>${nvx.talon.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-robin-maven-plugin</artifactId>
+            <version>${nvx.robin.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

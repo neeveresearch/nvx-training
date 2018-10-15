@@ -1,0 +1,6 @@
+##DISPLAYNAME Launch a driver XVM
+##DESCRIPTION Launches a driver XVM
+##VAR xvm [displayName="XVM", type=String, validValues="customerseeder,driver", description="The driver XVM to launch"] 
+
+launch the ${xvm::driver} xvm
+

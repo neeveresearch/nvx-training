@@ -1,0 +1,8 @@
+##DISPLAYNAME Provision a driver XVM
+##DESCRIPTION Wipes a current server installation and provisions clean images for a driver XVM
+##VAR xvm [displayName="XVM", type=String, validValues="customerseeder,driver", description="The driver XVM to provision"] 
+
+provision the ${xvm::driver} xvm
+configure the ${xvm::driver} xvm
+deploy to the ${xvm::driver} xvm
+

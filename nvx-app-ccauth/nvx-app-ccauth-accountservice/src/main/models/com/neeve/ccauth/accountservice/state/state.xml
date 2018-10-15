@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<model xmlns="http://www.neeveresearch.com/schema/x-adml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="com.neeve.ccauth.accountservice.state" defaultFactoryId="6">
+    <import model="com/neeve/ccauth/roe/fields/fields.xml"/>
+
+    <factories>
+        <factory name="StateFactory" id="6" />
+    </factories>
+
+    <entities>
+        <entity name="Repository" id="1">
+            <field name="accounts" type="Accounts" id="1"/>
+        </entity>
+
+        <entity name="Account" id="2">
+            <fieldRef ref="accountNumber" isKey="true" pinned="true"/>
+            <field name="profile" type="AccountProfile" id="2"/>
+        </entity>
+        
+        <entity name="AccountProfile" id="3">
+            <field name="firstName" type="String" id="1"/>
+            <field name="middleName" type="String" id="2"/>
+            <field name="lastName" type="String" id="3"/>
+            <field name="address" type="AccountProfileAddress" id="4"/>
+            <field name="emailAddress" type="String" id="5"/>
+            <field name="workPhone" type="String" id="6"/>
+            <field name="mobilePhone" type="String" id="7"/>
+            <field name="productCode" type="Byte" id="8"/>
+            <field name="startDate" type="Date" id="9"/>
+        </entity>    
+
+        <entity name="AccountProfileAddress" id="4" asEmbedded="true">
+            <field name="street1" type="String" id="1"/>
+            <field name="street2" type="String" id="2"/>
+            <field name="city" type="String" id="3"/>
+            <field name="state" type="String" id="4"/>
+            <field name="country" type="String" id="5" length="3"/>
+        </entity>    
+    </entities>
+
+    <collections>
+        <collection name="Accounts" is="StringMap" contains="Account" id="1000"/>
+    </collections>
+</model>

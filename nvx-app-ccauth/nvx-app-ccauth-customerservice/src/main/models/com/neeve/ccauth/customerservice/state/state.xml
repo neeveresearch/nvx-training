@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+
+<model xmlns="http://www.neeveresearch.com/schema/x-adml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="com.neeve.ccauth.customerservice.state" defaultFactoryId="2">
+    <import model="com/neeve/ccauth/roe/messages/messages.xml"/>
+
+    <factories>
+        <factory name="StateFactory" id="2" />
+    </factories>
+
+    <fields>
+        <field name="TransactionHistory" type="TransactionHistory" id="2001" />
+    </fields>
+
+    <entities>
+        <entity name="Repository" id="1">
+            <field name="customers" type="Customers" id="2"/>
+            <field name="requests" type="Requests" id="3"/>
+        </entity>
+
+        <entity name="Customer" id="2">
+            <inline ref="CustomerProfileDTO"/>
+            <fieldRef ref="CustomerId" isKey="true" pinned="true"/>
+            <fieldRef ref="TRSStringVariable1" />
+            <fieldRef ref="TransactionHistory"/>
+        </entity>
+
+        <entity name="Transaction" id="3">
+            <inline ref="TransactionDTO"/>
+        </entity>
+    </entities>
+
+    <collections>
+        <collection name="Customers" is="StringMap" contains="Customer" id="1000"/>
+        <collection name="TransactionHistory" is="Queue" contains="Transaction" id="1001"/>
+        <collection name="Requests" is="LongMap" contains="Transaction" id="1002"/>
+    </collections>
+</model>

@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>nvx-app-ccauth-customerservice</artifactId>
+    <packaging>jar</packaging>
+    <name>CCAuth Customer Service</name>
+
+    <parent>
+        <groupId>com.neeve</groupId>
+        <artifactId>nvx-app-ccauth-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-app-ccauth-roe</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-app-ccauth-merchantservice</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.neeve</groupId>
+                <artifactId>nvx-adm-maven-plugin</artifactId>
+                <version>${nvx.talon.version}</version>
+                <executions>
+                    <execution>
+                        <id>State</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>adm-generate</goal>
+                        </goals>
+                        <configuration>
+                            <modelFile>${project.basedir}/src/main/models/com/neeve/ccauth/customerservice/state/state.xml</modelFile>
+                            <encodingType>${nvx.codegen.encodingType}</encodingType>
+                            <protoXbufGenerationCompatibility>${nvx.codegen.protocompat}</protoXbufGenerationCompatibility>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

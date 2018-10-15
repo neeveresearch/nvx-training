@@ -1,0 +1,8 @@
+##DISPLAYNAME Shutdown a driver XVM
+##DESCRIPTION Shuts down a driver XVM
+##VAR app [displayName="App", type=String, validValues="customerseeder,driver", description="The driver XVM to shut down"] 
+
+assume LaunchDriverXVM has run
+stop the ${app::driver} app in the ${app::driver} xvm
+shutdown the ${app::driver} xvm
+

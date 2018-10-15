@@ -1,0 +1,11 @@
+##DISPLAYNAME Launch All XVMs
+##DESCRIPTION Launches all the XVMs in the CCAUTH system
+
+assume ProvisionAllXVMs has run
+launch the cardservice-1a xvm
+launch the cardservice-1b xvm
+launch the customerservice-1a xvm
+launch the customerservice-1b xvm
+launch the customerseeder xvm
+launch the driver xvm
+

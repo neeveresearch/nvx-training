@@ -1,0 +1,250 @@
+<?xml version="1.0"?>
+
+<model xmlns="http://www.neeveresearch.com/schema/x-adml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="com.neeve.ccauth.roe.messages" defaultFactoryId="1">
+    <import model="com/neeve/ccauth/roe/fields/fields.xml"/>
+
+    <factories>
+        <factory name="MessageFactory" id="1" />
+    </factories>
+
+    <fields>
+        <field name="AccountNumber" type="String" id="1" length="16"/>
+        <field name="TxnId" type="Long" id="2" />
+        <field name="TxnTimestamp" type="Long" id="3" />
+        <field name="TxnAmount" type="Double" id="4" />
+        <field name="MerchantNumber" type="String" id="5" />
+        <field name="MerchantStoreId" type="Long" id="6" />
+        <field name="MerchantStoreCountryCode" type="String" id="7" />
+        <field name="MerchantStorePostCode" type="String" id="8" />
+        <field name="CustomerId" type="String" id="9" />
+        <field name="Decision" type="Boolean" id="10" />
+        <field name="DecisionScore" type="Float" id="11" />
+        <field name="Transaction" type="TransactionDTO" id="12" />
+        <field name="Partition" type="Short" id="13" />
+        <field name="ProfileFirstName" type="String" id="14" />
+        <field name="ProfileLastName" type="String" id="15" />
+        <field name="ProfilePrimaryEmail" type="String" id="16" />
+        <field name="ProfilePrimaryPhoneNumber" type="String" id="17" />
+
+        <field name="TrasactionHistoryKey" type="Long" id="100" />
+
+        <field name="CMHistoryStringVariable1" type="String" id="101" />
+        <field name="CMHistoryStringVariable2" type="String" id="102" />
+        <field name="CMHistoryStringVariable3" type="String" id="103" />
+
+        <field name="ProfileStringVariable1" type="String" id="104" />
+        <field name="ProfileStringVariable2" type="String" id="105" />
+        <field name="ProfileStringVariable3" type="String" id="106" />
+        <field name="ProfileStringVariable4" type="String" id="107" />
+        <field name="ProfileStringVariable5" type="String" id="108" />
+        <field name="ProfileStringVariable6" type="String" id="109" />
+        <field name="ProfileLongVariable1" type="Long" id="110" />
+        <field name="ProfileLongVariable2" type="Long" id="111" />
+
+        <field name="SEProfStringVariable2" type="String" id="112" />
+        <field name="SEProfStringVariable3" type="String" id="113" />
+        <field name="SEProfStringVariable4" type="String" id="114" />
+        <field name="SEProfStringVariable5" type="String" id="115" />
+        <field name="SEProfStringVariable6" type="String" id="116" />
+        <field name="SEProfStringVariable7" type="String" id="117" />
+        <field name="SEProfLongVariable1" type="Long" id="118" />
+        <field name="SEProfLongVariable2" type="Long" id="119" />
+        <field name="SEProfDoubleVariable" type="Double" id="120" />
+        <field name="SEProfDoubleVariable1" type="Double" id="121" />
+
+        <field name="TRSStringVariable1" type="String" id="122" />
+        <field name="TRSStringVariable2" type="String" id="123" />
+        <field name="TRSStringVariable3" type="String" id="124" />
+        <field name="TRSIntVariable1" type="Integer" id="125" />
+        <field name="TRSLongVariable1" type="Long" id="126" />
+        <field name="TRSLongVariable2" type="Long" id="127" />
+        <field name="TRSDoubleVariable1" type="Double" id="128" />
+        <field name="TRSDoubleVariable2" type="Double" id="129" />
+        <field name="TRSDoubleVariable3" type="Double" id="130" />
+        <field name="TRSDoubleVariable4" type="Double" id="131" />
+        <field name="TRSDoubleVariable5" type="Double" id="132" />
+
+        <field name="CustomerVar1String" type="String" id="133" />
+        <field name="CustomerVar2String" type="String" id="134" />
+        <field name="CustomerVar3String" type="String" id="135" />
+        <field name="CustomerVar4String" type="String" id="136" />
+        <field name="CustomerVar5String" type="String" id="137" />
+        <field name="CustomerVar6String" type="String" id="138" />
+        <field name="CustomerVar7String" type="String" id="139" />
+        <field name="CustomerVar8String" type="String" id="140" />
+        <field name="CustomerVar9String" type="String" id="141" />
+        <field name="CustomerVar10String" type="String" id="142" />
+        <field name="CustomerVar11String" type="String" id="143" />
+        <field name="CustomerVar12String" type="String" id="144" />
+        <field name="CustomerVar1Int" type="Integer" id="145" />
+        <field name="CustomerVar2Int" type="Integer" id="146" />
+        <field name="CustomerVar3Int" type="Integer" id="147" />
+        <field name="CustomerVar4Int" type="Integer" id="148" />
+        <field name="CustomerVar5Int" type="Integer" id="149" />
+        <field name="CustomerVar6Int" type="Integer" id="150" />
+        <field name="CustomerVar7Int" type="Integer" id="151" />
+        <field name="CustomerVar8Int" type="Integer" id="152" />
+        <field name="CustomerVar1Long" type="Long" id="153" />
+        <field name="CustomerVar2Long" type="Long" id="154" />
+        <field name="CustomerVar3Long" type="Long" id="155" />
+        <field name="CustomerVar4Long" type="Long" id="156" />
+        <field name="CustomerVar5Long" type="Long" id="157" />
+        <field name="CustomerVar6Long" type="Long" id="158" />
+        <field name="CustomerVar7Long" type="Long" id="159" />
+        <field name="CustomerVar8Long" type="Long" id="160" />
+        <field name="CustomerVar1Double" type="Double" id="161" />
+        <field name="CustomerVar2Double" type="Double" id="162" />
+        <field name="CustomerVar3Double" type="Double" id="163" />
+        <field name="CustomerVar4Double" type="Double" id="164" />
+        <field name="CustomerVar5Double" type="Double" id="165" />
+        <field name="CustomerVar6Double" type="Double" id="166" />
+        <field name="CustomerVar7Double" type="Double" id="167" />
+        <field name="CustomerVar8Double" type="Double" id="168" />
+    </fields>
+
+    <messages>
+        <message name="AuthorizationRequestMessage" id="1">
+            <inline ref="AuthorizationRequestDTO" />
+        </message>
+
+        <message name="CustomerEnrichedAuthorizationRequestMessage" id="2">
+            <inline ref="AuthorizationRequestDTO" />
+            <fieldRef ref="CustomerId"/>
+        </message>
+
+        <message name="AuthorizationResponseMessage" id="3">
+            <fieldRef ref="TxnId" pinned="true"/>
+            <fieldRef ref="TxnTimestamp" pinned="true"/>
+            <fieldRef ref="CustomerId"/>
+            <fieldRef ref="AccountNumber"/>
+            <fieldRef ref="CustomerVar1String" />
+            <fieldRef ref="CustomerVar2String" />
+            <fieldRef ref="CustomerVar3String" />
+            <fieldRef ref="CustomerVar4String" />
+            <fieldRef ref="CustomerVar5String" />
+            <fieldRef ref="CustomerVar6String" />
+            <fieldRef ref="CustomerVar7String" />
+            <fieldRef ref="CustomerVar8String" />
+            <fieldRef ref="CustomerVar9String" />
+            <fieldRef ref="CustomerVar10String" />
+            <fieldRef ref="CustomerVar11String" />
+            <fieldRef ref="CustomerVar12String" />
+            <fieldRef ref="CustomerVar1Int" pinned="true" />
+            <fieldRef ref="CustomerVar2Int" pinned="true" />
+            <fieldRef ref="CustomerVar3Int" pinned="true" />
+            <fieldRef ref="CustomerVar4Int" pinned="true" />
+            <fieldRef ref="CustomerVar5Int" pinned="true" />
+            <fieldRef ref="CustomerVar6Int" pinned="true" />
+            <fieldRef ref="CustomerVar7Int" pinned="true" />
+            <fieldRef ref="CustomerVar8Int" pinned="true" />
+            <fieldRef ref="CustomerVar1Long" pinned="true" />
+            <fieldRef ref="CustomerVar2Long" pinned="true" />
+            <fieldRef ref="CustomerVar3Long" pinned="true" />
+            <fieldRef ref="CustomerVar4Long" pinned="true" />
+            <fieldRef ref="CustomerVar5Long" pinned="true" />
+            <fieldRef ref="CustomerVar6Long" pinned="true" />
+            <fieldRef ref="CustomerVar7Long" pinned="true" />
+            <fieldRef ref="CustomerVar8Long" pinned="true" />
+            <fieldRef ref="CustomerVar1Double" pinned="true" />
+            <fieldRef ref="CustomerVar2Double" pinned="true" />
+            <fieldRef ref="CustomerVar3Double" pinned="true" />
+            <fieldRef ref="CustomerVar4Double" pinned="true" />
+            <fieldRef ref="CustomerVar5Double" pinned="true" />
+            <fieldRef ref="CustomerVar6Double" pinned="true" />
+            <fieldRef ref="CustomerVar7Double" pinned="true" />
+            <fieldRef ref="CustomerVar8Double" pinned="true" />
+        </message>
+
+        <message name="AddTransactionMessage" id="4" doc="Adds a transaction to a customer's transaction history">
+            <fieldRef ref="Partition"/>
+            <fieldRef ref="Transaction"/>
+        </message>
+    </messages>
+
+    <entities>
+        <entity name="AuthorizationRequestDTO" asEmbedded="true" factoryid="1" id="300">
+            <fieldRef ref="Partition" pinned="true"/>
+        	<fieldRef ref="AccountNumber"/>
+            <fieldRef ref="TxnId" pinned="true"/>
+            <fieldRef ref="TxnTimestamp" pinned="true"/>
+            <fieldRef ref="TxnAmount" pinned="true"/>
+            <fieldRef ref="MerchantNumber"/>
+
+            <fieldRef ref="TRSStringVariable1" />
+            <fieldRef ref="TRSStringVariable2" />
+            <fieldRef ref="TRSStringVariable3" />
+            <fieldRef ref="TRSIntVariable1" pinned="true"/>
+            <fieldRef ref="TRSLongVariable1" pinned="true"/>
+            <fieldRef ref="TRSLongVariable2" pinned="true"/>
+            <fieldRef ref="TRSDoubleVariable1" pinned="true"/>
+            <fieldRef ref="TRSDoubleVariable2" pinned="true"/>
+            <fieldRef ref="TRSDoubleVariable3" pinned="true"/>
+            <fieldRef ref="TRSDoubleVariable4" pinned="true"/>
+            <fieldRef ref="TRSDoubleVariable5" pinned="true"/>
+        </entity>
+
+        <entity name="TransactionDTO" asEmbedded="true" factoryid="1" id="301">
+            <fieldRef ref="CustomerId"/>
+        	<fieldRef ref="AccountNumber"/>
+            <fieldRef ref="TxnId" pinned="true"/>
+            <fieldRef ref="TxnTimestamp" pinned="true"/>
+            <fieldRef ref="TxnAmount" pinned="true"/>
+            <fieldRef ref="MerchantNumber"/>
+
+            <fieldRef ref="TrasactionHistoryKey" pinned="true"/>
+
+            <fieldRef ref="CMHistoryStringVariable1" />
+            <fieldRef ref="CMHistoryStringVariable2" />
+            <fieldRef ref="CMHistoryStringVariable3" />
+
+            <fieldRef ref="ProfileStringVariable1" />
+            <fieldRef ref="ProfileStringVariable2" />
+            <fieldRef ref="ProfileStringVariable3" />
+            <fieldRef ref="ProfileStringVariable4" />
+            <fieldRef ref="ProfileStringVariable5" />
+            <fieldRef ref="ProfileStringVariable6" />
+
+            <fieldRef ref="ProfileLongVariable1" pinned="true" />
+            <fieldRef ref="ProfileLongVariable2" pinned="true" />
+
+            <fieldRef ref="SEProfStringVariable2" />
+            <fieldRef ref="SEProfStringVariable3" />
+            <fieldRef ref="SEProfStringVariable4" />
+            <fieldRef ref="SEProfStringVariable5" />
+            <fieldRef ref="SEProfStringVariable6" />
+            <fieldRef ref="SEProfLongVariable1" pinned="true" />
+            <fieldRef ref="SEProfLongVariable2" pinned="true" />
+            <fieldRef ref="SEProfDoubleVariable" pinned="true" />
+            <fieldRef ref="SEProfDoubleVariable1" pinned="true" />
+            <fieldRef ref="SEProfStringVariable7" />
+
+            <fieldRef ref="TRSStringVariable1" />
+            <fieldRef ref="TRSStringVariable2" />
+            <fieldRef ref="TRSStringVariable3" />
+            <fieldRef ref="TRSIntVariable1" pinned="true" />
+            <fieldRef ref="TRSLongVariable1" pinned="true" />
+            <fieldRef ref="TRSLongVariable2" pinned="true" />
+            <fieldRef ref="TRSDoubleVariable1" pinned="true" />
+            <fieldRef ref="TRSDoubleVariable2" pinned="true" />
+            <fieldRef ref="TRSDoubleVariable3" pinned="true" />
+            <fieldRef ref="TRSDoubleVariable4" pinned="true" />
+            <fieldRef ref="TRSDoubleVariable5" pinned="true" />
+        </entity>
+
+        <entity name="CustomerProfileDTO" asEmbedded="true" factoryid="1" id="302">
+            <fieldRef ref="ProfileFirstName" />
+            <fieldRef ref="ProfileLastName" />
+            <fieldRef ref="ProfilePrimaryEmail" />
+            <fieldRef ref="ProfilePrimaryPhoneNumber" />
+            <fieldRef ref="ProfileStringVariable1" />
+            <fieldRef ref="ProfileStringVariable2" />
+            <fieldRef ref="ProfileStringVariable3" />
+            <fieldRef ref="ProfileStringVariable4" />
+            <fieldRef ref="ProfileStringVariable5" />
+            <fieldRef ref="ProfileStringVariable6" />
+            <fieldRef ref="ProfileLongVariable1" pinned="true" />
+            <fieldRef ref="ProfileLongVariable2" pinned="true" />
+        </entity>
+    </entities>
+</model>
+

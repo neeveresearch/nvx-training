@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<model xmlns="http://www.neeveresearch.com/schema/x-adml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="com.neeve.ccauth.merchantservice.messages" defaultFactoryId="4">
+    <import model="com/neeve/ccauth/roe/messages/messages.xml"/>
+
+    <factories>
+        <factory name="MessageFactory" id="4" />
+    </factories>
+
+    <fields>
+        <field name="MerchantName" type="String" id="100" />
+        <field name="MerchantStoreList" type="MerchantStoreDTO[]" id="101" />
+        <field name="RequestorId" type="String" id="103" />
+    </fields>
+
+    <messages>
+        <message name="AddMerchantMessage" id="1" doc="Adds/updates a merchant into the system">
+            <inline ref="MerchantDTO" />
+        </message>
+
+        <message name="GetMerchantInfoRequestMessage" id="2" doc="Request to fetch information about a merchant">
+            <fieldRef ref="TxnId" pinned="true"/>
+            <fieldRef ref="RequestorId" pinned="false"/>
+            <fieldRef ref="MerchantNumber" pinned="true"/>
+        </message>
+
+        <message name="GetMerchantInfoResponseMessage" id="3" doc="Response to GetMerchantInfoRequestMessage">
+            <fieldRef ref="TxnId" pinned="true"/>
+            <fieldRef ref="RequestorId" pinned="false"/>
+        </message>
+    </messages>
+
+    <entities>
+        <entity name="MerchantDTO" asEmbedded="true" id="301">
+            <fieldRef ref="MerchantNumber" pinned="true"/>
+            <fieldRef ref="MerchantName"/>
+            <fieldRef ref="MerchantStoreList"/>
+        </entity>
+
+        <entity name="MerchantStoreDTO" asEmbedded="true" id="302">
+            <fieldRef ref="MerchantStoreId" pinned="true"/>
+            <fieldRef ref="MerchantStoreCountryCode"/>
+            <fieldRef ref="MerchantStorePostCode"/>
+        </entity>
+    </entities>
+</model>
+

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+names='customerservice-11a customerservice-12a customerservice-13a customerservice-14a customerservice-15a customerservice-16a customerservice-17a customerservice-18a customerservice-19a customerservice-20a'
+for name in $names
+do
+    pushd $name/nvx-app-ccauth-*
+    export LD_LIBRARY_PATH=/root/.nvx/native
+    rm -rf rdat
+    nohup $JAVA_HOME_ORACLE_1_8_0/bin/java -Xms1g -Xmx1g -cp "libs/*" -verbose:gc -Dnv.ddl.profiles=neeve-lab -Dnv.xiobuf.usemasterdirectbuffer=false com.neeve.server.Main -n $name &
+    popd
+    sleep 5
+done
+
+

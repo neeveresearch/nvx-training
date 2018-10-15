@@ -1,0 +1,21 @@
+##DISPLAYNAME Upgrade All XVMs
+##DESCRIPTION Updates configuration and binaries for all XVMs.
+
+configure the cardservice-1a xvm
+deploy to the cardservice-1a xvm
+
+configure the cardservice-1b xvm
+deploy to the cardservice-1b xvm
+
+configure the customerservice-1a xvm
+deploy to the customerservice-1a xvm
+
+configure the customerservice-1b xvm
+deploy to the customerservice-1b xvm
+
+configure the customerseeder xvm
+deploy to the customerseeder xvm
+
+configure the driver xvm
+deploy to the driver xvm
+

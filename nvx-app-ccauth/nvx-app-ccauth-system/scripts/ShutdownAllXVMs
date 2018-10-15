@@ -1,0 +1,11 @@
+##DISPLAYNAME Shutdown all XVMS
+##DESCRIPTION Shuts down all the XVMS in the CCAUTH system
+
+assume LaunchAllXVMs has run
+stop the driver app in the driver xvm
+stop the customerseeder app in the customerseeder xvm
+stop the cardservice-1 app in the cardservice-1b xvm
+stop the cardservice-1 app in the cardservice-1a xvm
+stop the customerservice-1 app in the customerservice-1b xvm
+stop the customerservice-1 app in the customerservice-1a xvm
+shutdown

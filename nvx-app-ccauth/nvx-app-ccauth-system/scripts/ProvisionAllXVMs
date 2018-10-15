@@ -1,0 +1,27 @@
+##DISPLAYNAME Provision All XVMs
+##DESCRIPTION Wipes current installations and provisions clean images for all XVMs.
+
+provision the cardservice-1a xvm
+configure the cardservice-1a xvm
+deploy to the cardservice-1a xvm
+
+provision the cardservice-1b xvm
+configure the cardservice-1b xvm
+deploy to the cardservice-1b xvm
+
+provision the customerservice-1a xvm
+configure the customerservice-1a xvm
+deploy to the customerservice-1a xvm
+
+provision the customerservice-1b xvm
+configure the customerservice-1b xvm
+deploy to the customerservice-1b xvm
+
+provision the customerseeder xvm
+configure the customerseeder xvm
+deploy to the customerseeder xvm
+
+provision the driver xvm
+configure the driver xvm
+deploy to the driver xvm
+

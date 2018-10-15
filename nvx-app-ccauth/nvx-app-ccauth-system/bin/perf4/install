@@ -1,0 +1,14 @@
+#!/bin/bash
+
+names='customerservice-1a customerservice-2a customerservice-3a customerservice-4a customerservice-5a customerservice-6a customerservice-7a customerservice-8a customerservice-9a customerservice-10a customerservice-21b customerservice-22b customerservice-23b customerservice-24b customerservice-25b customerservice-26b customerservice-27b customerservice-28b customerservice-29b customerservice-30b'
+for name in $names
+do
+    rm -rf $name
+    mkdir $name
+    cp nvx-app-ccauth-*.tar.gz $name
+    pushd $name
+    tar xvf nvx-app-ccauth-*.tar.gz
+    popd
+done
+
+

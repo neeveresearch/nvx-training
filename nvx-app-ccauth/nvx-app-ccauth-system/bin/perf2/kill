@@ -1,0 +1,11 @@
+#!/bin/bash
+
+names='merchantservice-1a merchantservice-1b cardservice-1a cardservice-1b seeder driver'
+for name in $names
+do
+    pushd $name/nvx-app-ccauth-*
+    $JAVA_HOME_18/bin/java -Xms4g -Xmx4g -cp "libs/*" -verbose:gc -Dnv.ddl.profiles=neeve-lab com.neeve.server.Main -n $name -a kill
+    popd
+done
+
+

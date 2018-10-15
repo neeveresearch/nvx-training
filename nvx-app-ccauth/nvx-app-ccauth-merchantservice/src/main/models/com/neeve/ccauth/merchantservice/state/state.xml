@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<model xmlns="http://www.neeveresearch.com/schema/x-adml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="com.neeve.ccauth.merchantservice.state" defaultFactoryId="3">
+    <import model="com/neeve/ccauth/merchantservice/messages/messages.xml"/>
+
+    <factories>
+        <factory name="StateFactory" id="3" />
+    </factories>
+
+    <fields>
+        <field name="Stores" type="MerchantStores"/>
+    </fields>
+
+    <entities>
+        <entity name="Repository" id="1">
+            <field name="merchants" type="Merchants" id="1"/>
+        </entity>
+
+        <entity name="Merchant" id="2">
+            <fieldRef ref="MerchantNumber" isKey="true" pinned="true"/>
+            <fieldRef ref="Stores"/>
+        </entity>
+
+        <entity name="MerchantStore" id="3">
+            <inline ref="MerchantStoreDTO"/>
+        </entity>
+    </entities>
+
+    <collections>
+        <collection name="Merchants" is="StringMap" contains="Merchant" id="1000"/>
+        <collection name="MerchantStores" is="Queue" contains="MerchantStore" id="1001"/>
+    </collections>
+</model>

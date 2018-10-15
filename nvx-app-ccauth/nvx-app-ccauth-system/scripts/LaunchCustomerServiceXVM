@@ -1,0 +1,7 @@
+##DISPLAYNAME Launch a Customer Service XVM
+##DESCRIPTION Launchs a Customer Service XVM
+##VAR partition [displayName="Partition", type=String, validValues="1,2", description="The partition of the customer service to launch"] 
+##VAR instance [displayName="Instance", type=String, validValues="a,b", description="The instance of the customer service to launch"] 
+
+launch the customerservice-${partition::1}${instance::a} xvm
+

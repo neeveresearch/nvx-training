@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<model xmlns="http://www.neeveresearch.com/schema/x-adml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="com.neeve.ccauth.cardservice.messages" defaultFactoryId="6">
+    <import model="com/neeve/ccauth/roe/messages/messages.xml"/>
+
+    <factories>
+        <factory name="MessageFactory" id="6" />
+    </factories>
+
+    <messages>
+        <message name="AddCardMessage" id="1" doc="Adds/updates a card into the system">
+            <inline ref="CardDTO" />
+        </message>
+    </messages>
+
+    <entities>
+        <entity name="CardDTO" asEmbedded="true" id="301">
+            <fieldRef ref="AccountNumber"/>
+            <fieldRef ref="CustomerId" pinned="true"/>
+        </entity>
+    </entities>
+</model>
+

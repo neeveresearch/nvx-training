@@ -1,0 +1,9 @@
+##DISPLAYNAME Provision a Customer Service XVM
+##DESCRIPTION Wipes a current server installation and provisions clean images for a Customer Service XVM
+##VAR partition [displayName="Partition", type=String, validValues="1,2", description="The partition of the customer service to provision"] 
+##VAR instance [displayName="Instance", type=String, validValues="a,b", description="The instance of the customer service to provision"] 
+
+provision the customerservice-${partition::1}${instance::a} xvm
+configure the customerservice-${partition::1}${instance::a} xvm
+deploy to the customerservice-${partition::1}${instance::a} xvm
+

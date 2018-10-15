@@ -1,0 +1,11 @@
+#!/bin/bash
+
+names='customerservice-21a customerservice-22a customerservice-23a customerservice-24a customerservice-25a customerservice-26a customerservice-27a customerservice-28a customerservice-29a customerservice-30a'
+for name in $names
+do
+    pushd $name/nvx-app-ccauth-*
+    $JAVA_HOME_ORACLE_1_8_0/bin/java -Xms4g -Xmx4g -cp "libs/*" -verbose:gc -Dnv.ddl.profiles=neeve-lab com.neeve.server.Main -n $name -a kill
+    popd
+done
+
+

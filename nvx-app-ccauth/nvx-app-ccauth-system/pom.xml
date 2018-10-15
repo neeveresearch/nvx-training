@@ -1,0 +1,149 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>nvx-app-ccauth-system</artifactId>
+    <packaging>jar</packaging>
+    <name>CCAuth System</name>
+
+    <parent>
+        <groupId>com.neeve</groupId>
+        <artifactId>nvx-app-ccauth-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-app-ccauth-roe</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-app-ccauth-merchantservice</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-app-ccauth-cardservice</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-app-ccauth-customerservice</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-app-ccauth-seeder</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neeve</groupId>
+            <artifactId>nvx-app-ccauth-driver</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.5</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- plugin>
+                <groupId>com.neeve</groupId>
+                <artifactId>nvx-robin-maven-plugin</artifactId>
+                <version>${nvx.robin.version}</version>
+                <executions>
+                    <execution>
+                        <id>Xar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>xar</goal>
+                        </goals>
+                        <configuration>
+                            <resourceDirectory>${project.build.directory}/resources</resourceDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin -->
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>dist</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <attach>true</attach>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                            <descriptors>
+                                <descriptor>${basedir}/src/main/assembly/distribution.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>zing</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.neeve</groupId>
+                        <artifactId>nvx-license-zing-mojo</artifactId>
+                        <version>1.0.3</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>generate-license</goal>
+                                </goals>
+                                <phase>prepare-package</phase>
+                                <configuration>
+                                    <customerName>Neeve</customerName>
+                                    <outputDirectory>${project.build.directory}/resources/license/zing</outputDirectory>
+                                    <jarsDirectory>${project.build.directory}/dependency</jarsDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>neeve-internal-release</id>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <url>https://nexus.neeveresearch.com/nexus/content/repositories/internal-releases/</url>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+</project>

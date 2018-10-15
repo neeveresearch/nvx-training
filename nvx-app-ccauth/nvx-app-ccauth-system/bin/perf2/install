@@ -1,0 +1,14 @@
+#!/bin/bash
+
+names='merchantservice-1a merchantservice-1b cardservice-1a cardservice-1b seeder driver'
+for name in $names
+do
+    rm -rf $name
+    mkdir $name
+    cp nvx-app-ccauth-*.tar.gz $name
+    pushd $name
+    tar xvf nvx-app-ccauth-*.tar.gz
+    popd
+done
+
+

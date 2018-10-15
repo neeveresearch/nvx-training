@@ -1,0 +1,9 @@
+##DISPLAYNAME Shutdown a Card Service XVM
+##DESCRIPTION Shuts down a Card Service XVM
+##VAR partition [displayName="Partition", type=String, validValues="1,2", description="The partition of the card service to shutdown"] 
+##VAR instance [displayName="Instance", type=String, validValues="a,b", description="The instance of the card service to shutdown"] 
+
+assume LaunchCardServiceXVM has run
+stop the cardservice-${partition::1} app in the cardservice-${partition::1}${instance::a} xvm
+shutdown the cardservice-${partition::1}${instance::a} xvm
+

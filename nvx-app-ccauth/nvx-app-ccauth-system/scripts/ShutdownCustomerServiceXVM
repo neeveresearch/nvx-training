@@ -1,0 +1,9 @@
+##DISPLAYNAME Shutdown a Customer Service XVM
+##DESCRIPTION Shuts down a Customer Service XVM
+##VAR partition [displayName="Partition", type=String, validValues="1,2", description="The partition of the customer service to shutdown"] 
+##VAR instance [displayName="Instance", type=String, validValues="a,b", description="The instance of the customer service to shutdown"] 
+
+assume LaunchCustomerServiceXVM has run
+stop the customerservice-${partition::1} app in the customerservice-${partition::1}${instance::a} xvm
+shutdown the customerservice-${partition::1}${instance::a} xvm
+

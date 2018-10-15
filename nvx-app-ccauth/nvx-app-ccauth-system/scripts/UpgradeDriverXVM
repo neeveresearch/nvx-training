@@ -1,0 +1,7 @@
+##DISPLAYNAME Upgrade a driver XVM
+##DESCRIPTION Updates configuration and binaries for a driverXVM
+##VAR xvm [displayName="XVM", type=String, validValues="customerseeder,driver", description="The driver XVM to provision"] 
+
+configure the ${xvm::driver} xvm
+deploy to the ${xvm::driver} xvm
+

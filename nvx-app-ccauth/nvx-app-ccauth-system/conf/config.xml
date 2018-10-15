@@ -1,0 +1,1899 @@
+<?xml version="1.0"?>
+<model xmlns="http://www.neeveresearch.com/schema/x-ddl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <env>
+        <nv>
+            <!-- optimize for latency -->
+            <optimizefor>latency</optimizefor>
+            <!-- xbuf.default.desyncpolicy>FrameFields</xbuf.default.desyncpolicy -->
+
+            <!-- trace -->
+            <aep.trace>info</aep.trace>
+            <sma.trace>info</sma.trace>
+
+            <!-- global latency stats settings -->
+            <time.useepochoffset>false</time.useepochoffset>
+            <msg.latency.stats>true</msg.latency.stats>
+            <ods.latency.stats>true</ods.latency.stats>
+            <link.network.stampiots>true</link.network.stampiots>
+            <latencymanager.samplesize>10240</latencymanager.samplesize>
+        </nv>
+    </env>
+
+    <buses>
+        <bus name="auth" descriptor="${ccauth.auth.bus.descriptor::activemq://localhost:61616}">
+            <channels>
+                <channel name="merchantrequests" id="1">
+                    <qos>Guaranteed</qos>
+                </channel>
+                <channel name="merchantresponses" id="2">
+                    <key>${RequestorId}</key>
+                    <qos>Guaranteed</qos>
+                </channel>
+                <channel name="custaddrequests" id="3">
+                    <key>${Partition}</key>
+                    <qos>Guaranteed</qos>
+                </channel>
+                <channel name="cardaddrequests" id="4">
+                    <qos>Guaranteed</qos>
+                </channel>
+                <channel name="authrequests" id="5">
+                    <qos>Guaranteed</qos>
+                </channel>
+                <channel name="eauthrequests" id="6">
+                    <key>${Partition}</key>
+                    <qos>Guaranteed</qos>
+                </channel>
+                <channel name="authresponses" id="7">
+                    <qos>Guaranteed</qos>
+                </channel>
+            </channels>
+        </bus>
+    </buses>
+
+    <apps>
+        <templates>
+            <app name="merchantservice-template">
+                <messaging>
+                    <factories>
+                        <factory name="com.neeve.ccauth.roe.messages.MessageFactory" />
+                        <factory name="com.neeve.ccauth.merchantservice.messages.MessageFactory" />
+                    </factories>
+                    <bus name="auth">
+                        <channels>
+                            <channel name="merchantrequests" join="true" />
+                            <channel name="merchantresponses" join="false" />
+                        </channels>
+                        <detachedSend enabled="false"/>
+                    </bus>
+                </messaging>
+                <storage enabled="true">
+                    <factories>
+                        <factory name="com.neeve.ccauth.merchantservice.state.StateFactory" />
+                    </factories>
+                    <persistenceQuorum>1</persistenceQuorum>
+                    <clustering enabled="true">
+                        <localIfAddr>${STORE_REPLICATION_INTERFACE::0.0.0.0}</localIfAddr>
+                        <localPort>${STORE_REPLICATION_LOCALPORT::0}</localPort>
+                        <linkParams>${STORE_LINK_PARAMS::nativeio=false}</linkParams>
+                    </clustering>
+                    <persistence enabled="true">
+                        <flushUsingMappedMemory>true</flushUsingMappedMemory>
+                        <flushOnCommit>true</flushOnCommit>
+                        <detachedPersist enabled="false">
+                            <queueDepth>128</queueDepth>
+                        </detachedPersist>
+                    </persistence>
+                </storage>
+                <inboundEventMultiplexing>
+                    <queueDepth>128</queueDepth>
+                </inboundEventMultiplexing>
+                <setSupportMetadata>false</setSupportMetadata>
+                <captureMessageTypeStats>true</captureMessageTypeStats>
+                <captureTransactionLatencyStats>true</captureTransactionLatencyStats>
+                <inboundEventAcknowledgementPolicy>OnSendStability</inboundEventAcknowledgementPolicy>
+                <sequenceUnsolicitedSends>true</sequenceUnsolicitedSends>
+            </app>
+
+            <app name="cardservice-template">
+                <messaging>
+                    <factories>
+                        <factory name="com.neeve.ccauth.roe.messages.MessageFactory" />
+                        <factory name="com.neeve.ccauth.cardservice.messages.MessageFactory" />
+                    </factories>
+                    <bus name="auth">
+                        <channels>
+                            <channel name="cardaddrequests" join="true" />
+                            <channel name="authrequests" join="true" />
+                            <channel name="eauthrequests" join="false" />
+                        </channels>
+                        <detachedSend enabled="false"/>
+                    </bus>
+                </messaging>
+                <storage enabled="true">
+                    <factories>
+                        <factory name="com.neeve.ccauth.cardservice.state.StateFactory" />
+                    </factories>
+                    <persistenceQuorum>1</persistenceQuorum>
+                    <clustering enabled="true">
+                        <localIfAddr>${STORE_REPLICATION_INTERFACE::0.0.0.0}</localIfAddr>
+                        <localPort>${STORE_REPLICATION_LOCALPORT::0}</localPort>
+                        <linkParams>${STORE_LINK_PARAMS::nativeio=false}</linkParams>
+                    </clustering>
+                    <persistence enabled="true">
+                        <flushUsingMappedMemory>true</flushUsingMappedMemory>
+                        <flushOnCommit>true</flushOnCommit>
+                        <detachedPersist enabled="false">
+                            <queueDepth>128</queueDepth>
+                        </detachedPersist>
+                    </persistence>
+                </storage>
+                <inboundEventMultiplexing>
+                    <queueDepth>128</queueDepth>
+                </inboundEventMultiplexing>
+                <setSupportMetadata>false</setSupportMetadata>
+                <captureMessageTypeStats>true</captureMessageTypeStats>
+                <captureTransactionLatencyStats>true</captureTransactionLatencyStats>
+                <inboundEventAcknowledgementPolicy>OnSendStability</inboundEventAcknowledgementPolicy>
+                <sequenceUnsolicitedSends>true</sequenceUnsolicitedSends>
+            </app>
+
+            <app name="customerservice-template">
+                <messaging>
+                    <factories>
+                        <factory name="com.neeve.ccauth.roe.messages.MessageFactory" />
+                        <factory name="com.neeve.ccauth.merchantservice.messages.MessageFactory" />
+                    </factories>
+                    <bus name="auth">
+                        <channels>
+                            <channel name="merchantrequests" join="false" />
+                            <channel name="authresponses" join="false" />
+                        </channels>
+                        <detachedSend enabled="false"/>
+                    </bus>
+                </messaging>
+                <storage enabled="true">
+                    <factories>
+                        <factory name="com.neeve.ccauth.customerservice.state.StateFactory" />
+                    </factories>
+                    <persistenceQuorum>1</persistenceQuorum>
+                    <clustering enabled="true">
+                        <localIfAddr>${STORE_REPLICATION_INTERFACE::0.0.0.0}</localIfAddr>
+                        <localPort>${STORE_REPLICATION_LOCALPORT::0}</localPort>
+                        <linkParams>${STORE_LINK_PARAMS::nativeio=false}</linkParams>
+                    </clustering>
+                    <persistence enabled="true">
+                        <flushUsingMappedMemory>true</flushUsingMappedMemory>
+                        <flushOnCommit>true</flushOnCommit>
+                        <detachedPersist enabled="false">
+                            <queueDepth>128</queueDepth>
+                        </detachedPersist>
+                    </persistence>
+                </storage>
+                <inboundEventMultiplexing>
+                    <queueDepth>128</queueDepth>
+                </inboundEventMultiplexing>
+                <setSupportMetadata>false</setSupportMetadata>
+                <captureMessageTypeStats>true</captureMessageTypeStats>
+                <captureTransactionLatencyStats>true</captureTransactionLatencyStats>
+                <inboundEventAcknowledgementPolicy>OnSendStability</inboundEventAcknowledgementPolicy>
+                <sequenceUnsolicitedSends>true</sequenceUnsolicitedSends>
+            </app>
+
+            <app name="gateway-template">
+                <inboundEventMultiplexing>
+                    <queueDepth>128</queueDepth>
+                </inboundEventMultiplexing>
+                <setSupportMetadata>false</setSupportMetadata>
+                <captureMessageTypeStats>true</captureMessageTypeStats>
+                <captureTransactionLatencyStats>true</captureTransactionLatencyStats>
+                <inboundEventAcknowledgementPolicy>OnSendStability</inboundEventAcknowledgementPolicy>
+                <sequenceUnsolicitedSends>true</sequenceUnsolicitedSends>
+            </app>
+        </templates>
+
+        <app name="merchantservice-1" displayName="Merchant Service Partition 1" mainClass="com.neeve.ccauth.merchantservice.Application" template="merchantservice-template"/>
+        <app name="cardservice-1" displayName="Card Service Partition 1" mainClass="com.neeve.ccauth.cardservice.Application" template="cardservice-template"/>
+        <app name="customerservice-1" displayName="Customer Service Partition 1" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-1</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=1</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=1</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-2" displayName="Customer Service Partition 2" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-2</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=2</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=2</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-3" displayName="Customer Service Partition 3" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-3</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=3</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=3</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-4" displayName="Customer Service Partition 4" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-4</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=4</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=4</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-5" displayName="Customer Service Partition 5" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-5</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=5</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=5</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-6" displayName="Customer Service Partition 6" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-6</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=6</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=6</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-7" displayName="Customer Service Partition 7" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-7</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=7</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=7</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-8" displayName="Customer Service Partition 8" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-8</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=8</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=8</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-9" displayName="Customer Service Partition 9" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-9</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=9</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=9</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-10" displayName="Customer Service Partition 10" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-10</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=10</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=10</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-11" displayName="Customer Service Partition 11" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-11</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=11</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=11</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-12" displayName="Customer Service Partition 12" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-12</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=12</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=12</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-13" displayName="Customer Service Partition 13" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-13</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=13</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=13</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-14" displayName="Customer Service Partition 14" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-14</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=14</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=14</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-15" displayName="Customer Service Partition 15" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-15</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=15</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=15</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-16" displayName="Customer Service Partition 16" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-16</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=16</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=16</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-17" displayName="Customer Service Partition 17" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-17</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=17</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=17</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-18" displayName="Customer Service Partition 18" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-18</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=18</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=18</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-19" displayName="Customer Service Partition 19" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-19</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=19</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=19</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-20" displayName="Customer Service Partition 20" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-20</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=20</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=20</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-21" displayName="Customer Service Partition 21" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-21</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=21</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=21</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-22" displayName="Customer Service Partition 22" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-22</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=22</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=22</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-23" displayName="Customer Service Partition 23" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-23</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=23</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=23</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-24" displayName="Customer Service Partition 24" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-24</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=24</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=24</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-25" displayName="Customer Service Partition 25" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-25</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=25</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=25</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-26" displayName="Customer Service Partition 26" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-26</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=26</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=26</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-27" displayName="Customer Service Partition 27" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-27</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=27</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=27</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-28" displayName="Customer Service Partition 28" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-28</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=28</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=28</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-29" displayName="Customer Service Partition 29" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-29</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=29</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=29</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="customerservice-30" displayName="Customer Service Partition 30" mainClass="com.neeve.ccauth.customerservice.Application" template="customerservice-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantresponses" join="true">
+                            <filter>RequestorId=customerservice-30</filter>
+                        </channel>
+                        <channel name="custaddrequests" join="true">
+                            <filter>Partition=30</filter>
+                        </channel>
+                        <channel name="eauthrequests" join="true">
+                            <filter>Partition=30</filter>
+                        </channel>
+                    </channels>
+                </bus>
+            </messaging>
+        </app>
+        <app name="seeder" displayName="Data Seeder" mainClass="com.neeve.ccauth.seeder.Application" template="gateway-template">
+            <messaging>
+                <bus name="auth">
+                    <channels>
+                        <channel name="merchantrequests" join="false" />
+                        <channel name="custaddrequests" join="false" />
+                        <channel name="cardaddrequests" join="false" />
+                    </channels>
+                </bus>
+            </messaging>
+            <storage enabled="false"/>
+        </app>
+
+        <app name="driver" displayName="Authorization Driver" mainClass="com.neeve.ccauth.driver.Application" template="gateway-template">
+            <messaging>
+                <factories>
+                    <factory name="com.neeve.ccauth.roe.messages.MessageFactory" />
+                </factories>
+                <bus name="auth">
+                    <channels>
+                        <channel name="authrequests" join="false" />
+                        <channel name="authresponses" join="true" />
+                    </channels>
+                </bus>
+            </messaging>
+            <storage enabled="false"/>
+        </app>
+    </apps>
+
+    <xvms>
+        <templates>
+            <xvm name="xvm-template">
+                <heartbeats enabled="true" interval="1">
+                    <tracing enabled="true">
+                        <traceAdminClientStats>false</traceAdminClientStats>
+                        <traceAppStats>false</traceAppStats>
+                        <tracePoolStats>false</tracePoolStats>
+                        <traceSysStats>true</traceSysStats>
+                        <traceThreadStats>false</traceThreadStats>
+                        <traceUserStats>true</traceUserStats>
+                    </tracing>
+                    <collectIndividualThreadStats>true</collectIndividualThreadStats>
+                    <collectSeriesStats>true</collectSeriesStats>
+                    <includeMessageTypeStats>true</includeMessageTypeStats>
+                </heartbeats>
+            </xvm>
+        </templates>
+        <xvm name="merchantservice-1a" displayName="Merchant Service Partition 1 Instance a" template="xvm-template">
+            <apps>
+                <app name="merchantservice-1" />
+            </apps>
+        </xvm>
+        <xvm name="merchantservice-1b" displayName="Merchant Service Partition 1 Instance b" template="xvm-template">
+            <apps>
+                <app name="merchantservice-1" />
+            </apps>
+        </xvm>
+        <xvm name="cardservice-1a" displayName="Card Service Partition 1 Instance a" template="xvm-template">
+            <apps>
+                <app name="cardservice-1" />
+            </apps>
+        </xvm>
+        <xvm name="cardservice-1b" displayName="Card Service Partition 1 Instance b" template="xvm-template">
+            <apps>
+                <app name="cardservice-1" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-1a" displayName="Customer Service XVM 1 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-1" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-1b" displayName="Customer Service XVM 1 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-1" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-2a" displayName="Customer Service XVM 2 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-2" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-2b" displayName="Customer Service XVM 2 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-2" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-3a" displayName="Customer Service XVM 3 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-3" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-3b" displayName="Customer Service XVM 3 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-3" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-4a" displayName="Customer Service XVM 4 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-4" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-4b" displayName="Customer Service XVM 4 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-4" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-5a" displayName="Customer Service XVM 5 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-5" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-5b" displayName="Customer Service XVM 5 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-5" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-6a" displayName="Customer Service XVM 6 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-6" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-6b" displayName="Customer Service XVM 6 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-6" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-7a" displayName="Customer Service XVM 7 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-7" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-7b" displayName="Customer Service XVM 7 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-7" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-8a" displayName="Customer Service XVM 8 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-8" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-8b" displayName="Customer Service XVM 8 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-8" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-9a" displayName="Customer Service XVM 9 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-9" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-9b" displayName="Customer Service XVM 9 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-9" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-10a" displayName="Customer Service XVM 10 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-10" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-10b" displayName="Customer Service XVM 10 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-10" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-11a" displayName="Customer Service XVM 11 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-11" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-11b" displayName="Customer Service XVM 11 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-11" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-12a" displayName="Customer Service XVM 12 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-12" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-12b" displayName="Customer Service XVM 12 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-12" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-13a" displayName="Customer Service XVM 13 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-13" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-13b" displayName="Customer Service XVM 13 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-13" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-14a" displayName="Customer Service XVM 14 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-14" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-14b" displayName="Customer Service XVM 14 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-14" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-15a" displayName="Customer Service XVM 15 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-15" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-15b" displayName="Customer Service XVM 15 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-15" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-16a" displayName="Customer Service XVM 16 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-16" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-16b" displayName="Customer Service XVM 16 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-16" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-17a" displayName="Customer Service XVM 17 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-17" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-17b" displayName="Customer Service XVM 17 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-17" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-18a" displayName="Customer Service XVM 18 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-18" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-18b" displayName="Customer Service XVM 18 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-18" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-19a" displayName="Customer Service XVM 19 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-19" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-19b" displayName="Customer Service XVM 19 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-19" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-20a" displayName="Customer Service XVM 20 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-20" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-20b" displayName="Customer Service XVM 20 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-20" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-21a" displayName="Customer Service XVM 21 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-21" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-21b" displayName="Customer Service XVM 21 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-21" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-22a" displayName="Customer Service XVM 22 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-22" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-22b" displayName="Customer Service XVM 22 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-22" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-23a" displayName="Customer Service XVM 23 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-23" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-23b" displayName="Customer Service XVM 23 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-23" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-24a" displayName="Customer Service XVM 24 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-24" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-24b" displayName="Customer Service XVM 24 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-24" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-25a" displayName="Customer Service XVM 25 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-25" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-25b" displayName="Customer Service XVM 25 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-25" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-26a" displayName="Customer Service XVM 26 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-26" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-26b" displayName="Customer Service XVM 26 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-26" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-27a" displayName="Customer Service XVM 27 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-27" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-27b" displayName="Customer Service XVM 27 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-27" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-28a" displayName="Customer Service XVM 28 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-28" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-28b" displayName="Customer Service XVM 28 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-28" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-29a" displayName="Customer Service XVM 29 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-29" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-29b" displayName="Customer Service XVM 29 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-29" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-30a" displayName="Customer Service XVM 210 Instance a" template="xvm-template">
+            <apps>
+                <app name="customerservice-30" />
+            </apps>
+        </xvm>
+        <xvm name="customerservice-30b" displayName="Customer Service XVM 210 Instance b" template="xvm-template">
+            <apps>
+                <app name="customerservice-30" />
+            </apps>
+        </xvm>
+
+        <xvm name="seeder" displayName="Data Seeder" template="xvm-template">
+            <apps>
+                <app name="seeder"/>
+            </apps>
+        </xvm>
+        <xvm name="driver" displayName="Authorization Driver" template="xvm-template">
+            <apps>
+                <app name="driver"/>
+            </apps>
+        </xvm>
+    </xvms>
+
+    <profiles>
+        <profile name="test">
+            <env>
+                <nv>
+                    <conservecpu>true</conservecpu>
+                    <discovery.descriptor>local://test&amp;initWaitTime=0</discovery.descriptor>
+                </nv>
+                <ccauth>
+                    <auth>
+                        <bus>
+                            <!-- descriptor>solace://64.62.151.21:55555&amp;use_default_queue_name=true&amp;SESSION_VPN_NAME=default&amp;SESSION_USERNAME=test&amp;usejni=false&amp;use_default_queue_name_as_default_client_id=true&amp;FLOW_FORWARDING_MODE=2&amp;sma_metadata_version=2</descriptor -->
+                            <descriptor>loopback://auth</descriptor>
+                        </bus>
+                    </auth>
+
+                    <seeder>
+                        <autoStart>true</autoStart>
+                        <numCustomers>10</numCustomers>
+                        <numTransactionsPerCustomer>1</numTransactionsPerCustomer>
+                        <customerIdStart>1</customerIdStart>
+                        <numMerchants>100</numMerchants>
+                        <numMerchantStores>2</numMerchantStores>
+                        <seedRate>1000</seedRate>
+                    </seeder>
+
+                    <driver>
+                        <autoStart>true</autoStart>
+                        <numCustomers>10</numCustomers>
+                        <numMerchants>100</numMerchants>
+                        <numMerchantStores>2</numMerchantStores>
+                        <sendRate>1000</sendRate>
+                        <sendCount>1000</sendCount>
+                    </driver>
+
+                    <customerservice>
+                        <transactionhistoryretention>0</transactionhistoryretention>
+                        <numpartitions>10</numpartitions>
+                        <rollup>
+                            <getstring>true</getstring>
+                            <getjavastring>false</getjavastring>
+                        </rollup>
+                    </customerservice>
+                </ccauth>
+            </env>
+
+            <xvms>
+                <templates>
+                    <xvm name="xvm-template">
+                        <heartbeats enabled="true" interval="1">
+                            <tracing enabled="false"/>
+                        </heartbeats>
+                    </xvm>
+                </templates>
+            </xvms>
+        </profile>
+
+        <profile name="desktop">
+            <env>
+                <nv>
+                    <conservecpu>true</conservecpu>
+                    <discovery.descriptor>activemq://localhost:61616</discovery.descriptor>
+                    <rog>
+                        <bbqueue>
+                            <com.neeve.ccauth.customerservice.state.TransactionHistory>
+                                <initialbufsize>32768</initialbufsize>
+                                <usenative>false</usenative>
+                            </com.neeve.ccauth.customerservice.state.TransactionHistory>
+                        </bbqueue>
+                    </rog>
+                </nv>
+                <ccauth>
+                    <auth>
+                        <bus>
+                            <descriptor>activemq://localhost:61616</descriptor>
+                        </bus>
+                    </auth>
+
+                    <seeder>
+                        <autoStart>true</autoStart>
+                        <numCustomers>1</numCustomers>
+                        <numTransactionsPerCustomer>20000</numTransactionsPerCustomer>
+                        <customerIdStart>1</customerIdStart>
+                        <numMerchants>100</numMerchants>
+                        <numMerchantStores>2</numMerchantStores>
+                        <seedRate>1000</seedRate>
+                    </seeder>
+
+                    <driver>
+                        <autoStart>true</autoStart>
+                        <numCustomers>1</numCustomers>
+                        <numMerchants>100</numMerchants>
+                        <numMerchantStores>2</numMerchantStores>
+                        <sendRate>100000</sendRate>
+                        <sendCount>1000</sendCount>
+                    </driver>
+
+                    <customerservice>
+                        <transactionhistoryretention>0</transactionhistoryretention>
+                        <numpartitions>1</numpartitions>
+                        <rollup>
+                            <getstring>true</getstring>
+                            <getjavastring>false</getjavastring>
+                        </rollup>
+                    </customerservice>
+                </ccauth>
+            </env>
+        </profile>
+
+        <profile name="neeve-lab">
+            <activation>
+                <properties>
+                    <lumino.agent.env>neeve-lab</lumino.agent.env>
+                </properties>
+            </activation>
+            <env>
+                <nv>
+                    <conservecpu>true</conservecpu>
+                    <discovery.descriptor>mcast://224.0.1.200:4090&amp;maxEntityAge=320</discovery.descriptor>
+                    <rog>
+                        <bbqueue>
+                            <com.neeve.ccauth.customerservice.state.TransactionHistory>
+                                <initialbufsize>12582912</initialbufsize>
+                                <usenative>true</usenative>
+                            </com.neeve.ccauth.customerservice.state.TransactionHistory>
+                        </bbqueue>
+                    </rog>
+                </nv>
+                <ccauth>
+                    <auth>
+                        <bus>
+                            <descriptor>solace://192.168.1.9:55555&amp;use_default_queue_name=true&amp;SESSION_VPN_NAME=default&amp;SESSION_USERNAME=test&amp;usejni=true&amp;use_default_queue_name_as_default_client_id=true&amp;FLOW_FORWARDING_MODE=2&amp;sma_metadata_version=2</descriptor>
+                        </bus>
+                    </auth>
+
+                    <seeder>
+                        <autoStart>false</autoStart>
+                        <numCustomers>100</numCustomers>
+                        <numTransactionsPerCustomer>20000</numTransactionsPerCustomer>
+                        <customerIdStart>1</customerIdStart>
+                        <numMerchants>100</numMerchants>
+                        <numMerchantStores>2</numMerchantStores>
+                        <seedRate>10000</seedRate>
+                    </seeder>
+
+                    <driver>
+                        <autoStart>false</autoStart>
+                        <numCustomers>100</numCustomers>
+                        <numMerchants>100</numMerchants>
+                        <numMerchantStores>2</numMerchantStores>
+                        <sendRate>1000</sendRate>
+                        <sendCount>100000</sendCount>
+                    </driver>
+
+                    <customerservice>
+                        <transactionhistoryretention>0</transactionhistoryretention>
+                        <numpartitions>30</numpartitions>
+                        <rollup>
+                            <getstring>false</getstring>
+                            <getjavastring>false</getjavastring>
+                        </rollup>
+                    </customerservice>
+                </ccauth>
+                <STORE_LINK_PARAMS>nativeio=true,eagerread=false,maxreadspintime=1000000</STORE_LINK_PARAMS>
+            </env>
+
+            <xvms>
+                <templates>
+                    <xvm name="xvm-template">
+                        <env>
+                            <GC_TUNING_PARAMS>-XX:MaxNewSize=4m -XX:SurvivorRatio=6 -XX:+UseParNewGC -XX:ParallelGCThreads=4 -Xnoclassgc -XX:MaxTenuringThreshold=2</GC_TUNING_PARAMS>
+                        </env>
+                        <provisioning>
+                            <jvm>
+                                <javaHome>/usr/java/jdk1.8.0_60</javaHome>
+                                <jvmParamSets>
+                                    <jvmParamSet name="prefer-ipv4">
+                                        <jvmParams>-Djava.net.preferIPv4Stack=true</jvmParams>
+                                    </jvmParamSet>
+                                    <jvmParamSet name="heap-size" order="-1">
+                                        <jvmParams>${GC_HEAP_SIZE_PARAMS}</jvmParams>
+                                    </jvmParamSet>
+                                    <jvmParamSet name="gc-tuning" order="0">
+                                        <jvmParams>${GC_TUNING_PARAMS}</jvmParams>
+                                    </jvmParamSet>
+                                </jvmParamSets>
+                            </jvm>
+                        </provisioning>
+                    </xvm>
+                </templates>
+                <xvm name="merchantservice-1a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.8</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.8</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="merchantservice-1b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.8</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.8</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="cardservice-1a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.8</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.8</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="cardservice-1b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.8</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.8</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-1a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-1b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-2a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-2b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-3a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-3b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-4a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-4b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-5a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-5b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-6a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-6b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-7a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-7b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-8a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-8b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-9a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-9b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-10a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-10b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-11a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-11b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-12a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-12b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-13a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-13b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-14a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-14b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-15a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-15b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-16a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-16b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-17a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-17b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-18a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-18b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-19a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-19b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-20a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.13</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.13</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-20b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-21a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-21b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-22a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-22b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-23a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-23b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-24a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-24b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-25a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-25b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-26a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-26b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-27a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-27b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-28a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-28b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-29a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-29b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-30a">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.14</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.14</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="customerservice-30b">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms1g -Xmx1g</GC_HEAP_SIZE_PARAMS>
+                        <STORE_REPLICATION_INTERFACE>192.168.2.12</STORE_REPLICATION_INTERFACE>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.12</host>
+                    </provisioning>
+                </xvm>
+
+                <xvm name="seeder">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms4g -Xmx4g</GC_HEAP_SIZE_PARAMS>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.8</host>
+                    </provisioning>
+                </xvm>
+                <xvm name="driver">
+                    <env>
+                        <GC_HEAP_SIZE_PARAMS>-Xms4g -Xmx4g</GC_HEAP_SIZE_PARAMS>
+                    </env>
+                    <provisioning>
+                        <host>192.168.1.8</host>
+                    </provisioning>
+                </xvm>
+            </xvms>
+        </profile>
+
+        <profile name="zing">
+            <activation>
+                <properties>
+                    <ccauth.usezing>true</ccauth.usezing>
+                </properties>
+            </activation>
+
+            <xvms>
+                <templates>
+                    <xvm name="xvm-template">
+                        <env>
+                            <GC_TUNING_PARAMS></GC_TUNING_PARAMS>
+                        </env>
+                        <provisioning>
+                            <jvm>
+                                <javaHome>/opt/zing/zing-jdk1.8.0-16.10.0.0-7-x86_64</javaHome>
+                                <jvmParamSets>
+                                    <jvmParamSet name="zing-license">
+                                        <jvmParams>-XX:ZingLicenseFile=%XVMRUNDIR%/resources/license/zing/license -XX:+JNIDetachThreadsIfNotDetached</jvmParams>
+                                    </jvmParamSet>
+                                </jvmParamSets>
+                            </jvm>
+                        </provisioning>
+                    </xvm>
+                </templates>
+            </xvms>
+        </profile>
+    </profiles>
+</model>

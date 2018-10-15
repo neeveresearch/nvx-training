@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<model xmlns="http://www.neeveresearch.com/schema/x-adml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="com.neeve.ccauth.roe.fields" defaultFactoryId="1">
+    <factories>
+        <factory name="MessageFactory" id="1" />
+    </factories>
+
+    <fields>
+        <field name="accountNumber" type="String" id="1" length="16"/>
+    </fields>
+</model>
+

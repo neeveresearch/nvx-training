@@ -1,0 +1,7 @@
+##DISPLAYNAME Launch a Card Service XVM
+##DESCRIPTION Launchs a Card Service XVM
+##VAR partition [displayName="Partition", type=String, validValues="1,2", description="The partition of the card service to launch"] 
+##VAR instance [displayName="Instance", type=String, validValues="a,b", description="The instance of the card service to launch"] 
+
+launch the cardservice-${partition::1}${instance::a} xvm
+

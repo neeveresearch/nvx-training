@@ -1,0 +1,9 @@
+**/target
+**/.project
+**/.settings
+**/.classpath
+**/rdat
+dependency/install-mvn.bat
+dependency/install-mvn.sh
+dependency/install_mvn.log
+dependency/repository/
