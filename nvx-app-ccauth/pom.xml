@@ -135,6 +135,17 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
+        <repository>
+            <id>neeve-public-releases</id>
+            <url>http://nexus.neeveresearch.com/nexus/content/groups/public/</url>
+            <name>Neeve Public Release Repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
     </repositories>
 
     <pluginRepositories>
