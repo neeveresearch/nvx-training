@@ -47,7 +47,7 @@
           </dependency>
         </dependencies>
       </dependencyManagement>
-  
+
     <dependencies>
         <dependency>
             <groupId>com.neeve</groupId>
@@ -68,13 +68,13 @@
             <artifactId>nvx-solace</artifactId>
             <version>${nvx.solace.version}</version>
         </dependency>
-        
+
         <dependency>
           <groupId>com.neeve</groupId>
           <artifactId>nvx-jms</artifactId>
           <version>${nvx.jms.version}</version>
         </dependency>
-        
+
         <dependency>
           <groupId>org.apache.activemq</groupId>
           <artifactId>activemq-client</artifactId>
@@ -136,15 +136,15 @@
             </releases>
         </repository>
         <repository>
-            <id>neeve-public-releases</id>
-            <url>http://nexus.neeveresearch.com/nexus/content/groups/public/</url>
-            <name>Neeve Public Release Repo</name>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
+            <id>neeve-public-releases</id>
+            <url>http://nexus.neeveresearch.com/nexus/content/groups/public/</url>
+            <name>Public Release Repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
         </repository>
     </repositories>
 
