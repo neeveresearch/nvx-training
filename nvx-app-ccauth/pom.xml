@@ -27,26 +27,6 @@
         <nvx.codegen.encodingType>Xbuf</nvx.codegen.encodingType>
         <nvx.codegen.protocompat>None</nvx.codegen.protocompat>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-          <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.8.9</version>
-          </dependency>
-          <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.8.9</version>
-          </dependency>
-          <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.8.9</version>
-          </dependency>
-        </dependencies>
-      </dependencyManagement>
   
     <dependencies>
         <dependency>
@@ -87,6 +67,26 @@
             <version>${nvx.robin.version}</version>
         </dependency -->
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.8.11</version>
+          </dependency>
+          <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.8.11</version>
+          </dependency>
+          <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.8.11.1</version>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
 
     <build>
         <plugins>
