@@ -1163,7 +1163,7 @@
                     <seeder>
                         <autoStart>true</autoStart>
                         <numCustomers>1</numCustomers>
-                        <numTransactionsPerCustomer>20000</numTransactionsPerCustomer>
+                        <numTransactionsPerCustomer>200</numTransactionsPerCustomer>
                         <customerIdStart>1</customerIdStart>
                         <numMerchants>100</numMerchants>
                         <numMerchantStores>2</numMerchantStores>
